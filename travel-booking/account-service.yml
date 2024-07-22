@@ -2,7 +2,7 @@ spring:
   application:
     name: ACCOUNT-SERVICE
   datasource:
-    url: ${DB_URL}/travel-account-service
+    url: ${DB_URL:jdbc:postgresql://localhost:5432}/travel-account-service
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:
@@ -16,19 +16,19 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8181/realms/travel-booking
-          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8181/realms/travel-booking}
+          jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8181/realms/travel-booking/protocol/openid-connect/certs}
 
 jwt:
   auth:
     converter:
-      resource-id: travel-booking-client
-      principle-attribute: preferred_username
+      resource-id: ${KEYCLOAK_RESOURCE_ID:travel-booking-client}
+      principle-attribute: ${KEYCLOAK_PRINCIPLE_ATTRIBUTE:preferred_username}
 
 keycloak:
-  realm: travel-booking
-  server-url: http://localhost:8181
-  client-id: travel-booking-client
+  realm: ${KEYCLOAK_REALM:travel-booking}
+  server-url: ${KEYCLOAK_SERVER_URL:http://localhost:8181}
+  client-id: ${KEYCLOAK_RESOURCE_ID:travel-booking-client}
 
 admin:
   keycloak:
@@ -41,7 +41,7 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://admin:admin@localhost:8761/eureka/
+      defaultZone: http://${EUREKA_USERNAME:admin}:${EUREKA_PASSWORD:admin}@${EUREKA_CLIENT_URL:localhost:8761/eureka/}
 
 management:
   tracing:
@@ -55,4 +55,10 @@ logging:
     org:
       springframework:
         web: DEBUG
+
+springdoc:
+  api-docs:
+    path: /account-service/v3/api-docs
+  swagger-ui:
+    path: /account-service/swagger-ui.html
         

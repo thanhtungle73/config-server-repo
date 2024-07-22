@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: ${DB_URL}/travel-inventory-service
+    url: ${DB_URL:jdbc:postgresql://localhost:5432}/travel-inventory-service
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:
@@ -23,7 +23,7 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://admin:admin@localhost:8761/eureka/
+      defaultZone: http://${EUREKA_USERNAME:admin}:${EUREKA_PASSWORD:admin}@${EUREKA_CLIENT_URL:localhost:8761/eureka/}
 
 management:
   tracing:
@@ -37,3 +37,9 @@ logging:
     org:
       springframework:
         web: DEBUG
+
+springdoc:
+  api-docs:
+    path: /inventory-service/v3/api-docs
+  swagger-ui:
+    path: /inventory-service/swagger-ui.html

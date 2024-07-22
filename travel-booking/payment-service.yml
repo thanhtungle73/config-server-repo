@@ -1,6 +1,6 @@
 spring:
  datasource:
-   url: ${DB_URL}/travel-payment-service
+   url: ${DB_URL:jdbc:postgresql://localhost:5432}/travel-payment-service
    username: ${DB_USERNAME}
    password: ${DB_PASSWORD}
  jpa:
@@ -21,7 +21,7 @@ server:
 eureka:
  client:
    serviceUrl:
-     defaultZone: http://admin:admin@localhost:8761/eureka/
+     defaultZone: http://${EUREKA_USERNAME:admin}:${EUREKA_PASSWORD:admin}@${EUREKA_CLIENT_URL:localhost:8761/eureka/}
 
 management:
  tracing:
@@ -43,3 +43,9 @@ stripe:
     key: ${PUBLIC_KEY}
   webhook:
     secret: ${WEBHOOK_SECRET}
+
+springdoc:
+  api-docs:
+    path: /payment-service/v3/api-docs
+  swagger-ui:
+    path: /payment-service/swagger-ui.html

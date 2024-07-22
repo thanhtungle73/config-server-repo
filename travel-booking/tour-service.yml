@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: ${DB_URL}/travel-tour-service
+    url: ${DB_URL:jdbc:postgresql://localhost:5432}/travel-tour-service
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:
@@ -12,7 +12,7 @@ spring:
             strategy:
           backend:
             type: elasticsearch
-            uris: http://localhost:9200
+            uris: ${ELASTICSEARCH_URL:http://localhost:9200}
     hibernate:
       ddl-auto: validate
       show-sql: always
@@ -22,8 +22,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8181/realms/travel-booking
-          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8181/realms/travel-booking}
+          jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8181/realms/travel-booking/protocol/openid-connect/certs}
   jackson:
     time-zone: Asia/Ho_Chi_Minh
   servlet:
@@ -34,17 +34,22 @@ spring:
   flyway:
     baseline-on-migrate: true
     enabled: true
-    url: ${DB_URL}/travel-tour-service
+    url: ${DB_URL:jdbc:postgresql://localhost:5432}/travel-tour-service
     user: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     baseline-version: 0
     baseline-description: init
     locations: classpath:db/migration
+  kafka:
+    producer:
+      bootstrap-servers: ${KAFKA_SERVER:localhost:9092}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://admin:admin@localhost:8761/eureka/
+      defaultZone: http://${EUREKA_USERNAME:admin}:${EUREKA_PASSWORD:admin}@${EUREKA_CLIENT_URL:localhost:8761/eureka/}
 
 management:
   tracing:
@@ -61,7 +66,7 @@ logging:
 
 minio:
   bucket:
-    name: travel-booking-storage
+    name: ${MINIO_BUCKET_NAME:travel-booking-storage}
 
 server:
   tomcat:
@@ -70,5 +75,16 @@ server:
 jwt:
   auth:
     converter:
-      resource-id: travel-booking-client
-      principle-attribute: preferred_username
+      resource-id: ${KEYCLOAK_RESOURCE_ID:travel-booking-client}
+      principle-attribute: ${KEYCLOAK_PRINCIPLE_ATTRIBUTE:preferred_username}
+
+redis:
+  host: ${REDIS_HOST:localhost}
+  port: ${REDIS_PORT:6379}
+  timeout: 3600
+
+springdoc:
+  api-docs:
+    path: /tour-service/v3/api-docs
+  swagger-ui:
+    path: /tour-service/swagger-ui.html

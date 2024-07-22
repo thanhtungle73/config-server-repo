@@ -14,6 +14,24 @@ spring:
     name: NOTIFICATION-SERVICE
   jackson:
     time-zone: Asia/Ho_Chi_Minh
+  kafka:
+    consumer:
+      bootstrap-servers: ${KAFKA_SERVER:localhost:9092}
+      group-id: ${spring.application.name}-kafka-consumer-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring:
+          deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+          json.trusted.packages: '*'
+          json.use.type.headers: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8181/realms/travel-booking}
+          jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8181/realms/travel-booking/protocol/openid-connect/certs}
 
 server:
   port: 8095
@@ -21,7 +39,7 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://admin:admin@localhost:8761/eureka/
+      defaultZone: http://${EUREKA_USERNAME:admin}:${EUREKA_PASSWORD:admin}@${EUREKA_CLIENT_URL:localhost:8761/eureka/}
 
 management:
   tracing:
@@ -35,3 +53,13 @@ logging:
     org:
       springframework:
         web: DEBUG
+
+server:
+  tomcat:
+    relaxed-query-chars: '|,{,},[,]'
+
+springdoc:
+  api-docs:
+    path: /notification-service/v3/api-docs
+  swagger-ui:
+    path: /notification-service/swagger-ui.html
