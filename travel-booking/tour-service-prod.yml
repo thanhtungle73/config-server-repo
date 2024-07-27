@@ -1,0 +1,95 @@
+spring:
+  datasource:
+    url: ${DB_PROTOCOL:jdbc:postgresql}://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:travel-tour-service}?serverTimezone=UTC
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        search:
+          schema_management:
+            strategy:
+          backend:
+            type: elasticsearch
+            uris: ${ELASTICSEARCH_URL:http://localhost:9200}
+    hibernate:
+      ddl-auto: validate
+      show-sql: always
+  application:
+    name: TOUR-SERVICE
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8181/realms/travel-booking}
+          jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8181/realms/travel-booking/protocol/openid-connect/certs}
+  jackson:
+    time-zone: Asia/Ho_Chi_Minh
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+  flyway:
+    baseline-on-migrate: true
+    enabled: false
+    url: ${DB_PROTOCOL:jdbc:postgresql}://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:travel-tour-service}?serverTimezone=UTC
+    user: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    baseline-version: 0
+    baseline-description: init
+    locations: classpath:db/migration
+  kafka:
+    producer:
+      bootstrap-servers: ${KAFKA_SERVER:localhost:9092}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_USERNAME:admin}:${EUREKA_PASSWORD:admin}@${EUREKA_CLIENT_URL:localhost:8761/eureka/}
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  endpoints:
+    web:
+      exposure:
+        include: ${MANAGEMENT_ENPOINTS_EXPOSURE:refresh,health,info,env}
+
+logging:
+  pattern:
+    level: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
+  level:
+    org:
+      springframework:
+        web: DEBUG
+
+minio:
+  bucket:
+    name: ${MINIO_BUCKET_NAME:travel-booking-storage}
+
+server:
+  tomcat:
+    relaxed-query-chars: '|,{,},[,]'
+
+jwt:
+  auth:
+    converter:
+      resource-id: ${KEYCLOAK_RESOURCE_ID:travel-booking-client}
+      principle-attribute: ${KEYCLOAK_PRINCIPLE_ATTRIBUTE:preferred_username}
+
+redis:
+  host: ${REDIS_HOST:localhost}
+  port: ${REDIS_PORT:6379}
+  timeout: 3600
+
+springdoc:
+  api-docs:
+    path: /tour-service/v3/api-docs
+  swagger-ui:
+    path: /tour-service/swagger-ui.html
