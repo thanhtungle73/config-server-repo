@@ -36,6 +36,8 @@ spring:
 
 server:
   port: 8095
+  tomcat:
+    relaxed-query-chars: '|,{,},[,]'
 
 eureka:
   client:
@@ -58,10 +60,6 @@ logging:
     org:
       springframework:
         web: DEBUG
-
-server:
-  tomcat:
-    relaxed-query-chars: '|,{,},[,]'
 
 springdoc:
   api-docs:
