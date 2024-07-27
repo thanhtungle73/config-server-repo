@@ -30,6 +30,10 @@ management:
   tracing:
     sampling:
       probability: 1.0
+  endpoints:
+    web:
+      exposure:
+        include: ${MANAGEMENT_ENPOINTS_EXPOSURE:refresh,health,info,env}
 
 logging:
   pattern:
