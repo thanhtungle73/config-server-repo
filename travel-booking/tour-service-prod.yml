@@ -15,7 +15,7 @@ spring:
             type: elasticsearch
             uris: ${ELASTICSEARCH_URL:http://localhost:9200}
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
       show-sql: always
   application:
     name: TOUR-SERVICE
